@@ -26,9 +26,14 @@ public class Restaurant{
     public void placeOrder(Order order) {
         accessLock.lock();
         if(this.hasFood()){
-            ordersMade++;
-            orderAvailable=true;
-            sharedOrders.offer(order);
+            try {
+                ordersMade++;
+                orderAvailable=true;
+                sharedOrders.put(order);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
             canBringFood.signal();
         }
         accessLock.unlock();
